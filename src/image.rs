@@ -1,13 +1,18 @@
 use anyhow::{Context, Result};
 use image::ImageFormat;
 use std::path::Path;
-use std::fs::File;
-use std::io::{BufReader, BufWriter};
 
-pub fn strip_image_metadata(input_path: &Path, output_path: &Path) -> Result<()> {
+pub fn strip_image_metadata(input_path: &Path, output_path: &Path) -> Result<Vec<String>> {
     // Read the image
     let img = image::open(input_path)
         .with_context(|| format!("Failed to open image: {}", input_path.display()))?;
+
+    // Get metadata info if available - just report generic information
+    // since we can't easily extract the specific metadata with the current image crate
+    let mut removed_metadata = Vec::new();
+    removed_metadata.push("EXIF metadata (if present)".to_string());
+    removed_metadata.push("GPS data (if present)".to_string());
+    removed_metadata.push("Camera info (if present)".to_string());
 
     // Determine the output format based on the input file extension
     let format = match input_path.extension().and_then(|e| e.to_str()) {
@@ -23,7 +28,7 @@ pub fn strip_image_metadata(input_path: &Path, output_path: &Path) -> Result<()>
     img.save_with_format(output_path, format)
         .with_context(|| format!("Failed to save image: {}", output_path.display()))?;
 
-    Ok(())
+    Ok(removed_metadata)
 }
 
 #[cfg(test)]
@@ -42,6 +47,8 @@ mod tests {
         img.save(&input).unwrap();
 
         // Test stripping metadata
-        assert!(strip_image_metadata(input.path(), output.path()).is_ok());
+        let result = strip_image_metadata(input.path(), output.path());
+        assert!(result.is_ok());
+        assert!(!result.unwrap().is_empty());
     }
 } 

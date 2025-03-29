@@ -7,14 +7,12 @@ description = "A cross-platform command-line tool for removing privacy-sensitive
 license = "GPL-3.0-only"
 repository = "https://github.com/subnetmasked/MetaStripper"
 readme = "README.md"
-keywords = ["metadata", "privacy", "exif", "image", "video", "pdf"]
+keywords = ["metadata", "privacy", "exif", "image", "video"]
 categories = ["command-line-utilities", "filesystem", "multimedia::image", "multimedia::video"]
-links = "ffmpeg"
 
 [dependencies]
 clap = { version = "4.4", features = ["derive"] }
 image = "0.24"
-pdf = "0.8"
 walkdir = "2.4"
 anyhow = "1.0"
 thiserror = "1.0"
@@ -26,7 +24,3 @@ rayon = "1.8"
 [[bin]]
 name = "metastripper"
 path = "src/main.rs"
-
-[[bin]]
-name = "create_test_files"
-path = "src/tests/create_test_files.rs"

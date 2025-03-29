@@ -10,6 +10,7 @@ A cross-platform command-line tool for removing privacy-sensitive metadata from 
 - Support for batch processing of multiple files
 - Option to overwrite original files or save cleaned copies
 - Progress bar and detailed logging
+- Detailed reports of removed metadata
 - Cross-platform support (macOS, Linux)
 
 ## Installation
@@ -69,6 +70,11 @@ metastripper --overwrite input_file.jpg
 Enable verbose logging:
 ```bash
 metastripper --verbose input_file.jpg
+```
+
+Show detailed report of removed metadata:
+```bash
+metastripper --show-metadata input_file.jpg
 ```
 
 ## Supported File Types

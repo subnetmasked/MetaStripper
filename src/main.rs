@@ -7,10 +7,13 @@ use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
 
 mod image;
+mod pdf;
+
+// Import the module but not directly the function to avoid linker errors
 mod video;
 
 use image::strip_image_metadata;
-use video::strip_video_metadata;
+use pdf::strip_pdf_metadata;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -30,6 +33,10 @@ struct Args {
     /// Enable verbose logging
     #[arg(short, long)]
     verbose: bool,
+    
+    /// Show detailed report of metadata removed from each file
+    #[arg(short = 'm', long)]
+    show_metadata: bool,
 }
 
 #[derive(Debug)]
@@ -42,6 +49,7 @@ struct FileInfo {
 enum FileType {
     Image,
     Video,
+    PDF,
     Unknown,
 }
 
@@ -98,15 +106,36 @@ fn main() -> Result<()> {
     );
 
     // Process files in parallel
-    files.par_iter().for_each(|file| {
-        match process_file(file, &args) {
-            Ok(_) => info!("Successfully processed: {}", file.path.display()),
-            Err(e) => warn!("Failed to process {}: {}", file.path.display(), e),
-        }
-        pb.inc(1);
-    });
-
+    let results: Vec<_> = files.par_iter()
+        .map(|file| {
+            let result = process_file(file, &args);
+            pb.inc(1);
+            (file, result)
+        })
+        .collect();
+    
     pb.finish_with_message("Processing complete");
+    
+    // Display results after the progress bar is done
+    if args.show_metadata {
+        println!("\nRemoved metadata report:");
+        for (file, result) in results {
+            match result {
+                Ok(metadata) => {
+                    if !metadata.is_empty() {
+                        println!("\n{}: ", file.path.display());
+                        for item in metadata {
+                            println!("  - {}", item);
+                        }
+                    }
+                }
+                Err(e) => {
+                    println!("\n{}: Failed - {}", file.path.display(), e);
+                }
+            }
+        }
+    }
+    
     Ok(())
 }
 
@@ -115,6 +144,7 @@ fn determine_file_type(path: &Path) -> FileType {
         match ext.to_lowercase().as_str() {
             "jpg" | "jpeg" | "png" | "gif" | "bmp" | "tiff" => FileType::Image,
             "mp4" | "mov" | "avi" | "mkv" => FileType::Video,
+            "pdf" => FileType::PDF,
             _ => FileType::Unknown,
         }
     } else {
@@ -122,7 +152,7 @@ fn determine_file_type(path: &Path) -> FileType {
     }
 }
 
-fn process_file(file: &FileInfo, args: &Args) -> Result<()> {
+fn process_file(file: &FileInfo, args: &Args) -> Result<Vec<String>> {
     let output_path = if args.overwrite {
         file.path.clone()
     } else {
@@ -134,12 +164,24 @@ fn process_file(file: &FileInfo, args: &Args) -> Result<()> {
         output_dir.join(file_name)
     };
 
-    match file.file_type {
+    let result = match file.file_type {
         FileType::Image => strip_image_metadata(&file.path, &output_path),
-        FileType::Video => strip_video_metadata(&file.path, &output_path),
+        FileType::Video => video::strip_video_metadata(&file.path, &output_path),
+        FileType::PDF => strip_pdf_metadata(&file.path, &output_path),
         FileType::Unknown => {
             warn!("Unsupported file type: {}", file.path.display());
-            Ok(())
+            Ok(vec!["Unsupported file type - no metadata removed".to_string()])
+        }
+    };
+    
+    if let Ok(ref metadata) = result {
+        if args.verbose {
+            info!("Successfully processed: {}", file.path.display());
+            if !metadata.is_empty() {
+                info!("Removed {} metadata items", metadata.len());
+            }
         }
     }
+    
+    result
 }
