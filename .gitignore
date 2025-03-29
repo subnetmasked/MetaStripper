@@ -12,3 +12,48 @@ Cargo.lock
 
 # MSVC Windows builds of rustc generate these, which store debugging information
 *.pdb
+
+# Added by cargo
+/target
+
+# Test files and directories
+test_files/
+output/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.tiff
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.pdf
+
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.temp
+
+# Windows specific files
+Thumbs.db
+ehthumbs.db
+
+# Linux specific files
+.Xauthority
+.Xauthority.lock
+.Xauthority.lock.lock
+.Xauthority.lock.lock.lock
+.Xauthority.lock.lock.lock.lock
+.Xauthority.lock.lock.lock.lock.lock
