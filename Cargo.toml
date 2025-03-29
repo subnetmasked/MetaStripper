@@ -9,7 +9,7 @@ repository = "https://github.com/subnetmasked/MetaStripper"
 readme = "README.md"
 keywords = ["metadata", "privacy", "exif", "image", "video", "pdf"]
 categories = ["command-line-utilities", "filesystem", "multimedia::image", "multimedia::video"]
-links = { "ffmpeg" = "ffmpeg" }
+links = "ffmpeg"
 
 [dependencies]
 clap = { version = "4.4", features = ["derive"] }
