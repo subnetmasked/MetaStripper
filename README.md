@@ -102,3 +102,20 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is licensed under the GNU General Public License v3.0 - see the LICENSE file for details.
+
+# Homebrew MetaStripper
+
+This is a Homebrew tap for the MetaStripper tool.
+
+## Installation
+
+```bash
+brew tap subnetmasked/metastripper
+brew install metastripper
+```
+
+## What is MetaStripper?
+
+MetaStripper is a cross-platform command-line tool for removing privacy-sensitive metadata from files before sharing or uploading them. It supports various file types including images, PDFs, and videos.
+
+For more information, visit the [main repository](https://github.com/subnetmasked/MetaStripper).
