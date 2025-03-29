@@ -14,10 +14,20 @@ pub fn strip_image_metadata(input_path: &Path, output_path: &Path) -> Result<Vec
     let mut removed_metadata = Vec::new();
     
     // Try to extract EXIF data
-    if let Ok(metadata) = extract_exif_metadata(input_path) {
+    let exif_metadata = extract_exif_metadata(input_path);
+    
+    // Extract basic image information
+    let basic_metadata = extract_basic_image_metadata(&img);
+    
+    if let Ok(metadata) = exif_metadata {
         removed_metadata.extend(metadata);
-    } else {
-        // Fallback to generic metadata if extraction fails
+    }
+    
+    // Always include basic metadata
+    removed_metadata.extend(basic_metadata);
+    
+    // If we still don't have any metadata, use the fallback
+    if removed_metadata.is_empty() {
         removed_metadata.push("EXIF metadata (if present)".to_string());
         removed_metadata.push("GPS data (if present)".to_string());
         removed_metadata.push("Camera info (if present)".to_string());
@@ -38,6 +48,23 @@ pub fn strip_image_metadata(input_path: &Path, output_path: &Path) -> Result<Vec
         .with_context(|| format!("Failed to save image: {}", output_path.display()))?;
 
     Ok(removed_metadata)
+}
+
+fn extract_basic_image_metadata(img: &image::DynamicImage) -> Vec<String> {
+    let mut metadata = Vec::new();
+    
+    // Get image dimensions
+    let width = img.width();
+    let height = img.height();
+    metadata.push(format!("Image Dimensions: {}x{}", width, height));
+    
+    // Get color type
+    let color_type = format!("{:?}", img.color());
+    metadata.push(format!("Color Type: {}", color_type));
+    
+    // Format-specific metadata could be added here
+    
+    metadata
 }
 
 fn extract_exif_metadata(path: &Path) -> Result<Vec<String>> {
@@ -132,6 +159,31 @@ fn extract_exif_metadata(path: &Path) -> Result<Vec<String>> {
     
     if let Some(iso) = get_exif_string(&exif, Tag::ISOSpeed, In::PRIMARY) {
         metadata.push(format!("ISO: {}", iso));
+    }
+
+    // Check some additional tags
+    if let Some(orientation) = get_exif_string(&exif, Tag::Orientation, In::PRIMARY) {
+        metadata.push(format!("Orientation: {}", orientation));
+    }
+    
+    if let Some(xres) = get_exif_string(&exif, Tag::XResolution, In::PRIMARY) {
+        metadata.push(format!("X Resolution: {}", xres));
+    }
+    
+    if let Some(yres) = get_exif_string(&exif, Tag::YResolution, In::PRIMARY) {
+        metadata.push(format!("Y Resolution: {}", yres));
+    }
+    
+    if let Some(resolution_unit) = get_exif_string(&exif, Tag::ResolutionUnit, In::PRIMARY) {
+        metadata.push(format!("Resolution Unit: {}", resolution_unit));
+    }
+    
+    if let Some(copyright) = get_exif_string(&exif, Tag::Copyright, In::PRIMARY) {
+        metadata.push(format!("Copyright: {}", copyright));
+    }
+    
+    if let Some(artist) = get_exif_string(&exif, Tag::Artist, In::PRIMARY) {
+        metadata.push(format!("Artist: {}", artist));
     }
     
     if metadata.is_empty() {
