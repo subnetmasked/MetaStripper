@@ -1,6 +1,6 @@
 [package]
 name = "metastripper"
-version = "0.1.0"
+version = "0.1.4"
 edition = "2021"
 authors = ["SubnetMasked <subnetmasked@cock.li>"]
 description = "A cross-platform command-line tool for removing privacy-sensitive metadata from files"
@@ -20,6 +20,9 @@ indicatif = "0.17"
 log = "0.4"
 env_logger = "0.10"
 rayon = "1.8"
+kamadak-exif = "0.5"
+chrono = "0.4"
+serde_json = "1.0"
 
 [[bin]]
 name = "metastripper"
