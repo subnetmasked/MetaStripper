@@ -12,6 +12,12 @@ A cross-platform command-line tool for removing privacy-sensitive metadata from 
 - Progress bar and detailed logging
 - Detailed reports of removed metadata
 - Cross-platform support (macOS, Linux)
+- Recursive directory processing with subdirectories
+- File type filtering for targeted processing
+- Backup creation of original files
+- Dry-run mode to preview operations
+- Statistics summary reporting
+- Silent/quiet mode for scripting
 
 ## Installation
 
@@ -110,6 +116,11 @@ Process an entire directory:
 metastripper /path/to/directory
 ```
 
+Recursively process directories with subdirectories:
+```bash
+metastripper --recursive /path/to/directory
+```
+
 Save cleaned files to a different directory:
 ```bash
 metastripper --output-dir /path/to/output input_file.jpg
@@ -120,6 +131,23 @@ Overwrite original files:
 metastripper --overwrite input_file.jpg
 ```
 
+Create backups before modifying:
+```bash
+metastripper --backup --overwrite input_file.jpg
+```
+
+Preview without making changes:
+```bash
+metastripper --dry-run /path/to/directory
+```
+
+Process only specific file types:
+```bash
+metastripper --only-images /path/to/directory
+metastripper --only-videos /path/to/directory
+metastripper --only-pdfs /path/to/directory
+```
+
 Enable verbose logging:
 ```bash
 metastripper --verbose input_file.jpg
@@ -128,6 +156,16 @@ metastripper --verbose input_file.jpg
 Show detailed report of removed metadata:
 ```bash
 metastripper --show-metadata input_file.jpg
+```
+
+Display processing statistics:
+```bash
+metastripper --stats input_file.jpg
+```
+
+Silent mode (for scripts/automation):
+```bash
+metastripper --quiet /path/to/directory
 ```
 
 ## Supported File Types
