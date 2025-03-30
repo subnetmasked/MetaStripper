@@ -22,13 +22,66 @@ A cross-platform command-line tool for removing privacy-sensitive metadata from 
 
 ### Building from Source
 
+#### macOS
+
 ```bash
+# Install prerequisites
+brew install rust ffmpeg
+
+# Clone and build
 git clone https://github.com/subnetmasked/MetaStripper.git
 cd MetaStripper
 cargo build --release
 ```
 
-The compiled binary will be available at `target/release/metastripper`.
+#### Ubuntu/Debian Linux
+
+```bash
+# Install prerequisites
+sudo apt update
+sudo apt install curl build-essential pkg-config libssl-dev ffmpeg
+
+# Install Rust
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source $HOME/.cargo/env
+
+# Clone and build
+git clone https://github.com/subnetmasked/MetaStripper.git
+cd MetaStripper
+cargo build --release
+```
+
+#### Fedora/RHEL/CentOS
+
+```bash
+# Install prerequisites
+sudo dnf install gcc openssl-devel pkg-config ffmpeg
+
+# Install Rust
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source $HOME/.cargo/env
+
+# Clone and build
+git clone https://github.com/subnetmasked/MetaStripper.git
+cd MetaStripper
+cargo build --release
+```
+
+#### Windows
+
+1. Install Rust from https://www.rust-lang.org/tools/install
+2. Install ffmpeg:
+   - Download from https://www.gyan.dev/ffmpeg/builds/ (recommend the "Essential" build)
+   - Extract the archive and add the `bin` folder to your PATH
+
+```powershell
+# Clone and build
+git clone https://github.com/subnetmasked/MetaStripper.git
+cd MetaStripper
+cargo build --release
+```
+
+The compiled binary will be available at `target/release/metastripper` (or `target\release\metastripper.exe` on Windows).
 
 ### macOS (Homebrew)
 
